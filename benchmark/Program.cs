@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2023 James Swerdfeger
+// Licensed under the MIT license.
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+using Benchmark;
+using BenchmarkDotNet.Running;
+
+BenchmarkRunner.Run<Benchmarker>();
