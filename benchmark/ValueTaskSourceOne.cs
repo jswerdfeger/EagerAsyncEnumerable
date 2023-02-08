@@ -19,9 +19,10 @@ internal class ValueTaskSourceOne<T> : IAsyncEnumerator<T>
 {
 	private class MoveNextWaiter : IValueTaskSource<bool>
 	{
-		[SuppressMessage("Style", "IDE0044:Add readonly modifier",
-			Justification = "This is a mutable struct. It cannot be made readonly or it will cease to function at all.")]
-		private ValueTaskSourceOne<T> _owner;
+		private readonly ValueTaskSourceOne<T> _owner;
+
+		// Rem: This has to be mutable in order to work, but if you state the field is readonly,
+		// C# prevents it from being mutable, which will break the program for sure.
 		private ManualResetValueTaskSourceCore<bool> _source;
 		private ValueTaskAwaiter<bool> _awaiter;
 
