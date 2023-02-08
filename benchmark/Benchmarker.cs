@@ -19,6 +19,14 @@ public class Benchmarker
 
 	public Benchmarker() { }
 
+	internal Benchmarker(int count, int producerDelay, int consumerDelay)
+	{
+		Count = count;
+		ProducerDelay = producerDelay;
+		ConsumerDelay = consumerDelay;
+		GlobalSetup();
+	}
+
 	[GlobalSetup]
 	public void GlobalSetup()
 	{
