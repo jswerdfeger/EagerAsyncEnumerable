@@ -26,6 +26,8 @@ static async ValueTask Test(int count, int producerDelay, int consumerDelay)
 
 	actual = await benchmarker.NoEager();
 	Debug.Assert(expected == actual);
+	actual = await benchmarker.CacheOne();
+	Debug.Assert(expected == actual);
 }
 
 ;

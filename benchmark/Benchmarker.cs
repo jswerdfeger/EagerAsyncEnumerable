@@ -63,4 +63,15 @@ public class Benchmarker
 		return await ConsumeInts(enumerator);
 	}
 
+	[Benchmark]
+	public async ValueTask<int> CacheOne()
+	{
+		var source = ProduceInts();
+		await using var enumerator = new CacheOne<int>(source);
+		return await ConsumeInts(enumerator);
+	}
+
+
+
+
 }
