@@ -90,6 +90,8 @@ static async ValueTask Test(int count, int producerDelay, int consumerDelay)
 	Debug.Assert(expected == actual);
 	actual = await benchmarker.TaskCompletionSourceQueue();
 	Debug.Assert(expected == actual);
+	actual = await benchmarker.SempahoreQueue();
+	Debug.Assert(expected == actual);
 }
 
 ;

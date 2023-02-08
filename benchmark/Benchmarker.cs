@@ -87,5 +87,13 @@ public class Benchmarker
 		return await ConsumeInts(enumerator);
 	}
 
+	[Benchmark]
+	public async ValueTask<int> SempahoreQueue()
+	{
+		var source = ProduceInts();
+		await using var enumerator = new SemaphoreQueue<int>(source);
+		return await ConsumeInts(enumerator);
+	}
+
 
 }
