@@ -79,5 +79,13 @@ public class Benchmarker
 		return await ConsumeInts(enumerator);
 	}
 
+	[Benchmark]
+	public async ValueTask<int> TaskCompletionSourceQueue()
+	{
+		var source = ProduceInts();
+		await using var enumerator = new TaskCompletionSourceQueue<int>(source);
+		return await ConsumeInts(enumerator);
+	}
+
 
 }
