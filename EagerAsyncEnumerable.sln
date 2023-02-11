@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagerAsyncEnumerable", "src\EagerAsyncEnumerable.csproj", "{F86A1A89-E4F7-4F83-A9E4-FB0D239927DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EagerAsyncEnumerable", "src\EagerAsyncEnumerable.csproj", "{F86A1A89-E4F7-4F83-A9E4-FB0D239927DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EagerAsyncEnumerableTests", "tests\EagerAsyncEnumerableTests.csproj", "{BE825525-F8B3-457F-9C43-E4B908917DAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F86A1A89-E4F7-4F83-A9E4-FB0D239927DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F86A1A89-E4F7-4F83-A9E4-FB0D239927DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F86A1A89-E4F7-4F83-A9E4-FB0D239927DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE825525-F8B3-457F-9C43-E4B908917DAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE825525-F8B3-457F-9C43-E4B908917DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE825525-F8B3-457F-9C43-E4B908917DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE825525-F8B3-457F-9C43-E4B908917DAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
