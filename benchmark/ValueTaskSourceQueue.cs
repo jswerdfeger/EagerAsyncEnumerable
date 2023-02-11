@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2023 James Swerdfeger
+// Licensed under the MIT license.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -6,7 +9,6 @@ using System.Threading.Tasks;
 using System.Threading.Tasks.Sources;
 
 namespace Benchmark;
-
 
 /// <summary>
 /// This implementation loads all elements from the source enumerable, immediately, into a

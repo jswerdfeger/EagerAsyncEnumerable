@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) 2023 James Swerdfeger
+// Licensed under the MIT license.
+
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
