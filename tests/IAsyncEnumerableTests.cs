@@ -71,5 +71,17 @@ public class IAsyncEnumerableTests
 		CollectionAssert.AreEqual(expected.List, actual.List);
 	}
 
+	/// <summary>Assert the consumer and producer run in parallel with eachother.</summary>
+	[TestMethod, Timeout(30000)]
+	public async Task AssertParallel()
+	{
+		int count = 10, producerDelay = 100, consumerDelay = 100;
+		var source = Producer(count, producerDelay);
+		var expected = await Consumer(source, consumerDelay);
+		var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay);
+
+		Assert.IsTrue((actual.Time / expected.Time) < 0.7);
+	}
+
 
 }
