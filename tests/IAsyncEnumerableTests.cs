@@ -104,6 +104,35 @@ public class IAsyncEnumerableTests
 		CollectionAssert.AreEqual(expected.List, actual.List);
 	}
 
+	/// <summary>Assert disposal mid-enumeration does not raise any exceptions.</summary>
+	[DataTestMethod, Timeout(30000)]
+	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
+	[DataRow(10, 100, 10, DisplayName = "Slow Producer, Fast Consumer")]
+	[DataRow(10, 100, 0, DisplayName = "Slow Producer, Sync Consumer")]
+	[DataRow(10, 10, 100, DisplayName = "Fast Producer, Slow Consumer")]
+	[DataRow(10, 10, 10, DisplayName = "Fast Producer, Fast Consumer")]
+	[DataRow(10, 10, 0, DisplayName = "Fast Producer, Sync Consumer")]
+	[DataRow(10, 0, 100, DisplayName = "Sync Producer, Slow Consumer")]
+	[DataRow(10, 0, 10, DisplayName = "Sync Producer, Fast Consumer")]
+	[DataRow(10, 0, 0, DisplayName = "Sync Producer, Sync Consumer")]
+	public async Task AssertDisposal(int count, int producerDelay, int consumerDelay)
+	{
+		var source = Producer(count, producerDelay);
+
+		int i = 0, disposalCount = count / 2;
+		await foreach (var item in source.AsEagerEnumerable())
+		{
+			await Task.Delay(consumerDelay);
+			if (i++ == disposalCount)
+			{
+				break;
+			}
+		}
+
+		// Make sure no other thread crashes in the background after a delay.
+		await Task.Delay(1000);
+	}
+
 	/// <summary>Assert the consumer and producer run in parallel with eachother.</summary>
 	[TestMethod, Timeout(30000)]
 	public async Task AssertParallel()
