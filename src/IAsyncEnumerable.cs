@@ -143,7 +143,6 @@ public static class IAsyncEnumerable
 				lock (valueTaskSource)
 				{
 					if (hasMore) _queue.Enqueue(item);
-
 					else _readAllComplete = true;
 					valueTaskSource.SetResult(hasMore);
 				}
@@ -189,7 +188,7 @@ public static class IAsyncEnumerable
 			T item;
 			lock (_valueTaskSource)
 			{
-				if (_queue.TryDequeue(out item))
+				if (!_queue.TryDequeue(out item))
 				{
 					throw new InvalidOperationException("Failed to dequeue after our task reported success!");
 				}
