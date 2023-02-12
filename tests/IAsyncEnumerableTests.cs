@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -131,6 +132,18 @@ public class IAsyncEnumerableTests
 
 		// Make sure no other thread crashes in the background after a delay.
 		await Task.Delay(1000);
+	}
+
+	/// <summary>Asserts correct operation if producer is empty.</summary>
+	[TestMethod, Timeout(30000)]
+	public async Task AssertNoEntries()
+	{
+		int count = 0, producerDelay = 100, consumerDelay = 100;
+		var source = Producer(count, producerDelay);
+		var expected = new List<int>();
+		var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay);
+
+		CollectionAssert.AreEqual(expected, actual.List);
 	}
 
 	/// <summary>Assert the consumer and producer run in parallel with eachother.</summary>
