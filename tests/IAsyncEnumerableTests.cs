@@ -104,6 +104,37 @@ public class IAsyncEnumerableTests
 		CollectionAssert.AreEqual(expected.List, actual.List);
 	}
 
+	/// <summary>Assert if a consumer throws an exception, it flows to us.
+	[DataTestMethod, Timeout(30000)]
+	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
+	[DataRow(10, 100, 10, DisplayName = "Slow Producer, Fast Consumer")]
+	[DataRow(10, 100, 0, DisplayName = "Slow Producer, Sync Consumer")]
+	[DataRow(10, 10, 100, DisplayName = "Fast Producer, Slow Consumer")]
+	[DataRow(10, 10, 10, DisplayName = "Fast Producer, Fast Consumer")]
+	[DataRow(10, 10, 0, DisplayName = "Fast Producer, Sync Consumer")]
+	[DataRow(10, 0, 100, DisplayName = "Sync Producer, Slow Consumer")]
+	[DataRow(10, 0, 10, DisplayName = "Sync Producer, Fast Consumer")]
+	[DataRow(10, 0, 0, DisplayName = "Sync Producer, Sync Consumer")]
+	public async Task AssertConsumerException(int count, int producerDelay, int consumerDelay)
+	{
+		var source = Producer(count, producerDelay);
+
+		try
+		{
+			var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay, count / 2);
+		}
+		catch (MyException)
+		{
+			return;
+		}
+		catch (Exception e)
+		{
+			Assert.Fail($"A different exception, {e}, was raised.");
+		}
+
+		Assert.Fail("No exception was raised.");
+	}
+
 	/// <summary>Assert disposal mid-enumeration does not raise any exceptions.</summary>
 	[DataTestMethod, Timeout(30000)]
 	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
