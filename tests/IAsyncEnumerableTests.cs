@@ -51,6 +51,39 @@ public class IAsyncEnumerableTests
 	}
 
 
+	// FYI, I don't test this one in synchronous operation, as like with any task, if you cancel
+	// an operation after it's already complete, you wouldn't expect to have the exception get
+	// raised.
+	/// <summary>Assert cancellation works properly.</summary>
+	[DataTestMethod, Timeout(30000)]
+	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
+	[DataRow(10, 100, 10, DisplayName = "Slow Producer, Fast Consumer")]
+	[DataRow(10, 100, 0, DisplayName = "Slow Producer, Sync Consumer")]
+	[DataRow(10, 10, 100, DisplayName = "Fast Producer, Slow Consumer")]
+	[DataRow(10, 10, 10, DisplayName = "Fast Producer, Fast Consumer")]
+	[DataRow(10, 10, 0, DisplayName = "Fast Producer, Sync Consumer")]
+	[DataRow(10, 0, 100, DisplayName = "Sync Producer, Slow Consumer")]
+	[DataRow(10, 0, 10, DisplayName = "Sync Producer, Fast Consumer")]
+	public async Task AssertCancellation(int count, int producerDelay, int consumerDelay)
+	{
+		var cancellationTokenSource = new CancellationTokenSource();
+		var source = Producer(count, producerDelay);
+
+		int cancelAfter = (count / 2) * Math.Max(producerDelay, consumerDelay);
+		cancellationTokenSource.CancelAfter(cancelAfter);
+		try
+		{
+			var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay, -1,
+				cancellationTokenSource.Token);
+		}
+		catch (OperationCanceledException)
+		{
+			return;
+		}
+
+		Assert.Fail("OperationCanceledException was not thrown.");
+	}
+
 	/// <summary>Assert the enumerable returns all items.</summary>
 	[DataTestMethod, Timeout(30000)]
 	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
