@@ -188,6 +188,37 @@ public class IAsyncEnumerableTests
 		Assert.IsTrue((actual.Time / expected.Time) < 0.7);
 	}
 
+	/// <summary>Assert if a producer throws an exception, it flows to us.
+	[DataTestMethod, Timeout(30000)]
+	[DataRow(10, 100, 100, DisplayName = "Slow Producer, Slow Consumer")]
+	[DataRow(10, 100, 10, DisplayName = "Slow Producer, Fast Consumer")]
+	[DataRow(10, 100, 0, DisplayName = "Slow Producer, Sync Consumer")]
+	[DataRow(10, 10, 100, DisplayName = "Fast Producer, Slow Consumer")]
+	[DataRow(10, 10, 10, DisplayName = "Fast Producer, Fast Consumer")]
+	[DataRow(10, 10, 0, DisplayName = "Fast Producer, Sync Consumer")]
+	[DataRow(10, 0, 100, DisplayName = "Sync Producer, Slow Consumer")]
+	[DataRow(10, 0, 10, DisplayName = "Sync Producer, Fast Consumer")]
+	[DataRow(10, 0, 0, DisplayName = "Sync Producer, Sync Consumer")]
+	public async Task AssertProducerException(int count, int producerDelay, int consumerDelay)
+	{
+		var source = Producer(count, producerDelay, count / 2);
+
+		try
+		{
+			var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay);
+		}
+		catch (MyException)
+		{
+			return;
+		}
+		catch (Exception e)
+		{
+			Assert.Fail($"A different exception, {e}, was raised.");
+		}
+
+		Assert.Fail("No exception was raised.");
+	}
+
 	/// <summary>Assert there's no stack dive if it runs synchronously.</summary>
 	[TestMethod, Timeout(30000)]
 	public async Task AssertSafeStack()
