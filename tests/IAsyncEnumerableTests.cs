@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -157,6 +156,19 @@ public class IAsyncEnumerableTests
 
 		Assert.IsTrue((actual.Time / expected.Time) < 0.7);
 	}
+
+	/// <summary>Assert there's no stack dive if it runs synchronously.</summary>
+	[TestMethod, Timeout(30000)]
+	public async Task AssertSafeStack()
+	{
+		int count = 1_000_000, producerDelay = 0, consumerDelay = 0;
+		var source = Producer(count, producerDelay);
+		var expected = await Consumer(source, consumerDelay);
+		var actual = await Consumer(source.AsEagerEnumerable(), consumerDelay);
+
+		CollectionAssert.AreEqual(expected.List, actual.List);
+	}
+
 
 
 }
