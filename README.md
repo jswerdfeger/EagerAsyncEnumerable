@@ -11,8 +11,8 @@ Meanwhile, your consumer of these items also operates asynchronously, and it als
 to complete.
 
 The idea is, while your consumer is busy processing a result returned from the source
-`IAsyncEnumerable`, why not go ahead and continue to load items from your source `IAsyncEnumerable`
-at the same time as the consumer? You can have them queued and ready the moment the consumer is
+`IAsyncEnumerable`, why not go ahead and produce the next item from your source `IAsyncEnumerable`
+at the same time? You can have items queued and immediately ready the moment the consumer is
 available to process another item. **EagerAsyncEnumerable** makes it easy to do this without
 needing to manually stickhandle the tasks and the queue.
 
@@ -149,7 +149,7 @@ not be a normal operation, but an exceptional one, and you know there won't be c
 doing so.
 
 
-## Is there really benefit to using a queue?
+## Is there really a benefit to using a queue?
 
 You might see this implementation and wonder if it's overly complicated. Couldn't we achieve the
 same results by caching only a single move at a time, instead of all of them?
@@ -161,7 +161,7 @@ time. Thus, rather than having a queue at all, why not just cache the task to mo
 item, await that when the consumer requests it, then move to the next one before yielding the
 result? Same results, much less complexity, no need for a queue.
 
-And even the producer was the fast one, it'd be no different. Let's say `ProduceInts` takes
+And even if the producer was the fast one, it'd be no different. Let's say `ProduceInts` takes
 **50ms** and `ConsumeInts` takes **100ms**. Sure, you could queue multiple items from `ProduceInts`
 while `ConsumeInts` is running, but ultimately `ConsumeInts` is going to be the bottleneck. The
 best it can do is consume one int every 100ms. Thus, it still takes 1050ms to run: 50 ms for the
@@ -198,13 +198,15 @@ It's as easy as calling the `AsEagerEnumerable` extension method on any of the f
 
 Then, use `await foreach` as you otherwise would.
 
-Or, alternatively, use the `GetEagerEnumerator` extension if you'd rather work directly with the
-[IAsyncEnumerator&lt;T&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerator-1).
+Or, alternatively, you can use the `GetEagerEnumerator` extension if you'd rather work directly
+with the [IAsyncEnumerator&lt;T&gt;](https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.iasyncenumerator-1).
 Just note that using this will immediately start loading from the source, before you even make the
-first `MoveNextAsync` call, which could potentially be a good thing.
+first `MoveNextAsync` call. That could be a good thing, or a bad thing, depending.
 
 You can optionally supply a [CancellationToken](https://learn.microsoft.com/en-us/dotnet/api/system.threading.cancellationtoken),
-as you desire, but don't forget: you cannot predict how many items were _**actually**_ loaded from
-your source enumerable when you cancelled. It's not what you read, that's for sure. So long as that
-won't cause you any state problems or issues with your business data, go right ahead and cancel.
-Basically, use this for exceptions, like a user explicitly desiring to cancel.
+as you desire, but don't forget: you cannot predict how many items were _**actually**_ iterated
+over your source enumerable the moment you cancel. So long as that won't cause you any state
+problems or issues with your business data, go right ahead and cancel as required.
+
+Basically, use `CancellationToken` for exceptions, like a user explicitly desiring to cancel, or
+some sort of operational failure. 
